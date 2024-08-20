@@ -11,7 +11,7 @@ function TickerTape() {
   const predefinedSymbols = ['AAPL', 'GOOGL', 'AMZN', 'MSFT', 'META', 'NVDA', 'TSLA', 'PEP', 'SBUX', 'MRNA'];
   const [symbolsToFetch, setSymbolsToFetch] = useState(predefinedSymbols);
 
-  const [marketIsOpen, setMarketIsOpen] = useState(null); 
+  const [marketIsOpen, setMarketIsOpen] = useState(null);
 
   const fetchTickerData = async (symbol) => {
     try {
@@ -76,7 +76,7 @@ function TickerTape() {
             newTickerData[symbolsToFetch[i]] = {
               price: results[i].p,
               change,
-              previousClose: results[i].c 
+              previousClose: results[i].c
             };
           }
         }
