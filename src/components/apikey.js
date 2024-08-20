@@ -1,1 +1,0 @@
-export const POLYGON_API_KEY = "EDVLkHBKW4Id40n52bDjeVP1RBJ2Ppob";
