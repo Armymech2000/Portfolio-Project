@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import '../App.css';
+import '../App.css'; 
 import { POLYGON_API_KEY } from './apikey';
 
 function TickerTape() {
   const [tickerData, setTickerData] = useState({});
   const [newSymbol, setNewSymbol] = useState('');
-  const isFetching = useRef(false);
-  const lastFetchedTime = useRef(null);
+  const isFetching = useRef(false); 
+  const lastFetchedTime = useRef(null); 
 
-  const predefinedSymbols = ['AAPL', 'GOOGL', 'AMZN', 'MSFT', 'META', 'NVDA', 'TSLA', 'PEP', 'SBUX', 'MRNA'];
+  const predefinedSymbols = ['AAPL', 'GOOGL', 'AMZN', 'MSFT', 'META', 'NVDA', 'TSLA'];
   const [symbolsToFetch, setSymbolsToFetch] = useState(predefinedSymbols);
-
-  const [marketIsOpen, setMarketIsOpen] = useState(null);
 
   const fetchTickerData = async (symbol) => {
     try {
@@ -22,7 +20,7 @@ function TickerTape() {
         const data = await response.json();
         return data.results;
       } else {
-        throw new Error(`Error fetching data for ${symbol}: ${response.status} ${response.statusText}`);
+        throw new Error(`Error fetching data for ${symbol}: ${response.status} ${response.statusText}`); 
       }
     } catch (error) {
       console.error(`Error fetching data for ${symbol}:`, error);
@@ -30,54 +28,30 @@ function TickerTape() {
     }
   };
 
-  const fetchMarketStatus = async () => {
-    try {
-      const response = await fetch(
-        `https://api.polygon.io/v1/marketstatus/now?apiKey=${POLYGON_API_KEY}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        return data.market;
-      } else {
-        throw new Error(`Error fetching market status: ${response.status} ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error('Error fetching market status:', error);
-      return null;
-    }
-  }
-
   const fetchData = useCallback(async () => {
-    if (isFetching.current) return;
+    if (isFetching.current) return; 
     isFetching.current = true;
 
     try {
       const now = new Date();
       if (
         lastFetchedTime.current &&
-        now - lastFetchedTime.current < 2 * 60 * 1000
+        now - lastFetchedTime.current < 2 * 30 * 1000
       ) {
         return;
       }
 
-      const marketStatus = await fetchMarketStatus();
-      setMarketIsOpen(marketStatus === 'open');
-
       console.log("Fetching data for symbols:", symbolsToFetch);
 
       const results = await Promise.all(symbolsToFetch.map(fetchTickerData));
-
-      if (results.every(result => result !== null)) {
+      
+      if (results.every(result => result !== null)) { 
         const newTickerData = {};
         for (let i = 0; i < symbolsToFetch.length; i++) {
           if (results[i]) {
             const prevClose = tickerData[symbolsToFetch[i]]?.price;
             const change = prevClose !== undefined ? results[i].p - prevClose : 0;
-            newTickerData[symbolsToFetch[i]] = {
-              price: results[i].p,
-              change,
-              previousClose: results[i].c
-            };
+            newTickerData[symbolsToFetch[i]] = { price: results[i].p, change };
           }
         }
         setTickerData(newTickerData);
@@ -88,12 +62,12 @@ function TickerTape() {
     } finally {
       isFetching.current = false;
     }
-  }, [tickerData, symbolsToFetch]);
+  }, [tickerData, symbolsToFetch]); 
 
   useEffect(() => {
     fetchData();
 
-    const intervalId = setInterval(fetchData, 2 * 60 * 1000);
+    const intervalId = setInterval(fetchData, 2 * 30 * 1000);
 
     return () => clearInterval(intervalId);
   }, [fetchData]);
@@ -133,15 +107,12 @@ function TickerTape() {
               className={`ticker-item ${data.change < 0 ? 'loss' : ''}`}
             >
               <span className="symbol">{symbol}</span>
-              <span className="price">
-                {marketIsOpen ? data.price.toFixed(2) : data.previousClose.toFixed(2)}
-                {marketIsOpen ? '' : ' (Close)'}
-              </span>
+              <span className="price">{parseFloat(data.price).toFixed(2)}</span> 
               <span className="change">({data.change.toFixed(2)})</span>
             </div>
           ))}
         </div>
-      </div>
+      </div> 
     </div>
   );
 }

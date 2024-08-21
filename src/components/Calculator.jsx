@@ -14,8 +14,7 @@ function calculateStockPerformance(sharePrice, numShares, buyPrice) {
 
     const currentTotalValue = sharePrice * numShares;
     const profitLoss = currentTotalValue - numShares * buyPrice;
-    const percentChange =
-        (profitLoss / (numShares * buyPrice)) * 100 || 0;
+    const percentChange =(profitLoss / (numShares * buyPrice)) * 100 || 0;
 
     return { currentTotalValue, profitLoss, percentChange };
 }
@@ -39,7 +38,6 @@ function Calculator({ onAddToPortfolio }) {
                     const data = await response.json();
                     setSharePrice(data.results.p.toString());
 
-                    // Update the result state with the fetched share price
                     setResult(prevResult => ({
                         ...prevResult,
                         currentTotalValue: data.results.p * numShares,
